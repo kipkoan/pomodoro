@@ -11,6 +11,13 @@ function cleanup() {
 
 trap cleanup EXIT
 
+# use GNU date on Mac OS
+if [[ $(uname -s) =~ "Darwin" ]]; then
+    date="/usr/local/bin/gdate"
+else
+    date="date"
+fi
+
 curl -X POST -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${SLACK_TOKEN}" \
     -d '{"profile": {"status_emoji": ":tomato:", "status_text": "Pomodoro → '$(echo $(${date} -d "+25 minutes" +%l:%M%P))'"}}' \
