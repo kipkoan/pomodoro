@@ -1,9 +1,15 @@
 #!/usr/bin/env bash
-set -euo pipefail
+set -euxo pipefail
 
-# source Slack token
-source ~/.secrets
-date="/usr/local/bin/gdate"
+function cleanup() {
+    curl -X POST -H "Content-Type: application/json" \
+        -H "Authorization: Bearer ${SLACK_TOKEN}" \
+        -d '{"profile": {"status_emoji": "", "status_text": ""}}' \
+        -so /dev/null \
+        "https://slack.com/api/users.profile.set"
+}
+
+trap cleanup EXIT
 
 curl -X POST -H "Content-Type: application/json" \
     -H "Authorization: Bearer ${SLACK_TOKEN}" \
@@ -16,9 +22,3 @@ curl -X GET -H "Authorization: Bearer ${SLACK_TOKEN}" \
     "https://slack.com/api/dnd.setSnooze?num_minutes=25"
 
 sleep 1500
-
-curl -X POST -H "Content-Type: application/json" \
-    -H "Authorization: Bearer ${SLACK_TOKEN}" \
-    -d '{"profile": {"status_emoji": "", "status_text": ""}}' \
-    -so /dev/null \
-    "https://slack.com/api/users.profile.set"
