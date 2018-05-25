@@ -2,6 +2,10 @@
 set -euxo pipefail
 
 function cleanup() {
+    curl -X POST -H "Authorization: Bearer ${SLACK_TOKEN}" \
+        -so /dev/null \
+        "https://slack.com/api/dnd.endSnooze"
+
     curl -X POST -H "Content-Type: application/json" \
         -H "Authorization: Bearer ${SLACK_TOKEN}" \
         -d '{"profile": {"status_emoji": "", "status_text": ""}}' \
